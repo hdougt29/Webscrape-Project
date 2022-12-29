@@ -1,0 +1,49 @@
+import requests
+from bs4 import BeautifulSoup
+
+# Set the base URL of the website you want to scrape
+base_url = "https://www.imdb.com/list/ls050782187/"
+
+# Set the range of pages you want to scrape
+pages = range(1, 5)
+
+# Create a list of stop words to filter out
+stop_words = ['Action', 'Comedy', 'Family', 'History', 'Mystery', 'Sci-Fi', 'War', 'Adventure', 'Crime', 'Fantasy', 'Horror', 'News', 'Sports', 'Western', 'Animation', 'Documentary', 'Film-Noir',
+'Music', 'Reality-TV', 'Talk-Show', 'Biography', 'Drama', 'Game-Show', 'Musical', 'Romance', 'Thriller', 'The Godfather']
+
+# Create an empty dictionary to count the number of times each word appears
+word_counts = {}
+
+# Use a loop to iterate over the pages
+for page in pages:
+    # Set the URL of the page you want to scrape
+    url = base_url + "?sort=list_order,asc&st_dt=&mode=detail&page=2"
+
+    # Use requests to get the HTML of the page
+    response = requests.get(url)
+
+    # Use BeautifulSoup to parse the HTML
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Extract the reviews from the HTML using BeautifulSoup
+    reviews = soup.find_all('div', class_='lister-item-content')
+
+# Loop over the reviews and count the number of times each word appears
+    for review in reviews:
+        # Split the review text into a list of words
+        words = review.text.split()
+
+        # Loop over the words and count the number of times each word appears
+        for word in words:
+            # If the word is not in the list of stop words, add it to the dictionary or increment its count
+            if word in stop_words:
+                if word not in word_counts:
+                    word_counts[word] = 1
+                else:
+                    word_counts[word] += 1
+
+# Sort the dictionary by the number of times each genre appears
+sorted_word_counts = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+
+# Print the top 10 most frequent genres
+print(sorted_word_counts[:10])
