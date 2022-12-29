@@ -1,2 +1,2 @@
 # Webscrape-Project
-Find a movie that matches someone's preferences
+Find someone's top 10 favorite movie genres
